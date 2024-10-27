@@ -1,6 +1,6 @@
 ---
 import Layout from "@layouts/Layout.astro";
-import Hero from "@components/Hero.astro";
+// import Hero from "@components/Hero.astro";
 import Card from "@components/Card.astro";
 import { getCollection } from "astro:content";
 import { SITE_TITLE, SITE_DESCRIPTION } from "../data/const";
@@ -12,7 +12,7 @@ const lastblogs = blogs.slice(0, 4);
 
 <Layout title={SITE_TITLE} description={SITE_DESCRIPTION}>
   <main>
-    <Hero />
+    <!-- <Hero /> -->
     <!-- {
       projects?.length > 0 && (
         <>
