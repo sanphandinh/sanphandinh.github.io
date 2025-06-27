@@ -1,0 +1,44 @@
+---
+import Link from '~/components/base/Link.astro'
+import { getFilteredPosts, getSortedPosts } from '~/utils/data'
+import { withBasePath } from '~/utils/path'
+
+interface Props {
+  limit?: number
+  class?: string
+}
+
+const { limit = 3, class: className = '' } = Astro.props
+
+// Get the latest blog posts
+const allPosts = await getFilteredPosts('blog')
+const sortedPosts = getSortedPosts(allPosts)
+const featuredPosts = sortedPosts.slice(0, limit)
+---
+
+<section class:list={['featured-posts', className]}>
+  <h2 class="text-xl font-semibold mb-4">Featured Posts</h2>
+
+  <ul class="space-y-2 mb-4">
+    {
+      featuredPosts.map((post) => (
+        <li class="flex items-start gap-2">
+          <span class="text-sm op-50 mt-1">•</span>
+          <Link
+            href={withBasePath(`/blog/${post.id}/`)}
+            class="hover:op-100 op-75 transition-opacity"
+          >
+            {post.data.title}
+          </Link>
+        </li>
+      ))
+    }
+  </ul>
+
+  <Link
+    href={withBasePath('/blog/')}
+    class="text-sm op-60 hover:op-100 transition-opacity"
+  >
+    See more posts →
+  </Link>
+</section>

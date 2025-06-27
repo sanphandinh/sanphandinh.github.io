@@ -46,4 +46,7 @@ export default defineConfig({
     preserveScriptOrder: true,
     headingIdCompat: true,
   },
+  server: {
+    port: 3000
+  }
 })
