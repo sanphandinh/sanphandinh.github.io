@@ -2,10 +2,10 @@
 # You can add frontmatter here if needed
 ---
 
-import SocialLinks from '~/components/widgets/SocialLinks.astro'
 import Link from '~/components/base/Link.astro'
 import { getFilteredPosts, getSortedPosts } from '~/utils/data'
 import { withBasePath } from '~/utils/path'
+import SocialLinks from '~/components/widgets/SocialLinks.astro'
 
 export const allPosts = await getFilteredPosts('blog')
 export const sortedPosts = getSortedPosts(allPosts)

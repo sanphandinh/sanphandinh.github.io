@@ -21,12 +21,6 @@ export const UI: Ui = {
       text: 'Blog',
     },
     // {
-    //   path: '/projects',
-    //   title: 'Projects',
-    //   displayMode: 'alwaysText',
-    //   text: 'Projects',
-    // },
-    // {
     //   path: '/shorts',
     //   title: 'Shorts',
     //   displayMode: 'iconToTextOnMobile',
@@ -89,22 +83,6 @@ export const UI: Ui = {
   groupView: {
     maxGroupColumns: 3,
     showGroupItemColorOnHover: true,
-  },
-  githubView: {
-    monorepos: [
-      'withastro/astro',
-      'withastro/starlight',
-      'lin-stephanie/astro-loaders',
-    ],
-    mainLogoOverrides: [
-      [/starlight/, 'https://starlight.astro.build/favicon.svg'],
-    ],
-    subLogoMatches: [
-      [/theme/, 'i-unjs-theme-colors'],
-      [/github/, 'https://github.githubassets.com/favicons/favicon.svg'],
-      [/tweet/, 'i-logos-twitter'],
-      [/bluesky/, 'i-logos-bluesky'],
-    ],
   },
   externalLink: {
     newTab: false,

@@ -36,12 +36,10 @@ export const remarkPlugins: RemarkPlugins = [
       link: {
         faviconSourceUrl:
           'https://www.google.com/s2/favicons?domain={domain}&sz=128',
-        imgProps: (node: Parameters<PropertiesFromTextDirective>[0]) => {
+        imgProps: () => {
           const props: ReturnType<PropertiesFromTextDirective> = {
             'aria-hidden': 'true',
           }
-          if (node.attributes?.class?.includes('github'))
-            props.src = 'https://github.githubassets.com/favicons/favicon.svg'
           return props
         },
       },

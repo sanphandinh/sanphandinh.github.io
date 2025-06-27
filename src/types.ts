@@ -494,12 +494,6 @@ export interface Ui {
    */
   groupView: GroupView
 
-  /**
-   * Configures the `/releases` and `prs` UIs.
-   *
-   * Used in `src/components/views/GithubView.astro`.
-   */
-  githubView: GitHubView
 
   /**
    * Configures external links' behavior and appearance.
