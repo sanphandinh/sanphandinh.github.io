@@ -6,6 +6,10 @@
     "baseUrl": ".",
     "paths": {
       "~/*": ["./src/*"]
-    }
+    },
+    "jsx": "react-jsx",
+    "jsxImportSource": "astro",
+    "lib": ["esnext", "dom", "dom.iterable"],
+    "types": ["astro/client"]
   }
 }

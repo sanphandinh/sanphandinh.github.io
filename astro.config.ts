@@ -27,9 +27,6 @@ export default defineConfig({
   },
   image: {
     domains: SITE.imageDomains,
-    // Used for all local (except `/public`) and remote images using `![]()` syntax; not configurable per-image
-    // Used for all `<Image />` and `<Picture />` components unless overridden with `layout` prop
-    experimentalLayout: 'constrained',
   },
   vite: {
     server: {
@@ -39,12 +36,6 @@ export default defineConfig({
       },
     },
     build: { chunkSizeWarningLimit: 1200 },
-  },
-  experimental: {
-    responsiveImages: true,
-    contentIntellisense: true,
-    preserveScriptOrder: true,
-    headingIdCompat: true,
   },
   server: {
     port: 3000
