@@ -1,38 +1,23 @@
-import { getCollection } from 'astro:content'
-import rss from '@astrojs/rss'
+import rss from '@astrojs/rss';
+import { getCollection } from 'astro:content';
 
-import { SITE } from '~/config'
-import { withBasePath } from '~/utils/path'
-
-export async function GET() {
-  const blog = await getCollection('blog')
-
-  const filteredBlogitems = blog.filter((item) => !item.data.draft)
-
-  const sortedBlogItems = filteredBlogitems.sort(
-    (a, b) => new Date(b.data.pubDate) - new Date(a.data.pubDate)
-  )
+export async function GET(context) {
+  const posts = await getCollection('blog');
+  const sortedPosts = posts.sort((a, b) =>
+    b.data.pubDate.getTime() - a.data.pubDate.getTime()
+  );
 
   return rss({
-    title: SITE.title,
-    description: SITE.description,
-    site: SITE.website,
-    customData: `
-      <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
-      <image>
-        <title>${SITE.title}</title>
-        <url>${SITE.website}/icon-512.png</url>
-        <link>${SITE.website}</link>
-      </image>`,
-
-    items: sortedBlogItems.map((item) => ({
-      title: `${item.data.title}`,
-      link: withBasePath(`/blog/${item.id}`),
-      pubDate: item.data.pubDate,
-      description: item.data.description,
-      author: SITE.author,
+    title: 'My Blog',
+    description: 'A personal blog by a frontend engineer sharing insights on web development, programming, and technology',
+    site: context.site,
+    items: sortedPosts.map((post) => ({
+      title: post.data.title,
+      description: post.data.description,
+      pubDate: post.data.pubDate,
+      link: `/blog/${post.slug}/`,
+      author: post.data.author,
     })),
-
-    stylesheet: withBasePath('/rss-styles.xsl'),
-  })
+    customData: `<language>en-us</language>`,
+  });
 }

@@ -1,0 +1,480 @@
+---
+interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+  article?: boolean;
+  publishedTime?: string;
+}
+
+const {
+  title,
+  description = "Personal blog sharing thoughts on web development, frontend engineering, and life",
+  image = "/og-image.png",
+  article = false,
+  publishedTime
+} = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const socialImage = new URL(image, Astro.site);
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href={canonicalURL} />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content={article ? "article" : "website"} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={socialImage} />
+    {article && publishedTime && <meta property="article:published_time" content={publishedTime} />}
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content={canonicalURL} />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={socialImage} />
+
+    <!-- RSS Feed -->
+    <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="/rss.xml" />
+
+    <title>{title}</title>
+  </head>
+  <body>
+
+    <div class="container">
+
+      <header class="main-header enhanced-header">
+        <nav class="main-nav">
+          <a href="/" class="logo">
+            <span class="logo-icon" aria-hidden="true">✨</span>
+            <span class="logo-text">Sanphan's Blog</span>
+          </a>
+          <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/blog">Blog</a>
+            <a href="/about">About</a>
+          </div>
+        </nav>
+  <!-- Tagline removed for minimal header -->
+      </header>
+
+      <main>
+        <slot />
+      </main>
+
+      <footer>
+        <p>&copy; {new Date().getFullYear()} My Blog. Built with Astro.</p>
+      </footer>
+    </div>
+
+    <style is:global>
+      :root {
+        /* Modern tech-inspired color palette */
+        --color-bg: #0f172a;
+        --color-bg-secondary: #1e293b;
+        --color-bg-elevated: #334155;
+        --color-text: #f1f5f9;
+        --color-text-secondary: #cbd5e1;
+        --color-text-muted: #94a3b8;
+        --color-border: #334155;
+        --color-border-light: #475569;
+
+        /* Vibrant accent colors for technical blog */
+        --color-accent: #06b6d4;
+        --color-accent-light: #22d3ee;
+        --color-accent-dark: #0891b2;
+        --color-accent-subtle: #164e63;
+
+        --color-secondary: #8b5cf6;
+        --color-secondary-light: #a78bfa;
+
+        /* Code syntax colors */
+        --color-code-bg: #1e293b;
+        --color-code-border: #334155;
+
+        /* Links */
+        --color-link: #22d3ee;
+        --color-link-hover: #06b6d4;
+
+        /* Shadows - enhanced for depth */
+        --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.3);
+        --shadow-md: 0 4px 16px -2px rgb(0 0 0 / 0.4);
+        --shadow-lg: 0 20px 40px -8px rgb(0 0 0 / 0.5);
+        --shadow-glow: 0 0 20px -5px rgb(6 182 212 / 0.3);
+        --shadow-glow-purple: 0 0 20px -5px rgb(139 92 246 / 0.3);
+
+        /* Gradients */
+        --gradient-hero: linear-gradient(135deg, #06b6d4 0%, #8b5cf6 100%);
+        --gradient-card: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+        --gradient-border: linear-gradient(135deg, #06b6d4 0%, #8b5cf6 100%);
+      }
+
+      @media (prefers-color-scheme: light) {
+        :root {
+          --color-bg: #f8fafc;
+          --color-bg-secondary: #f1f5f9;
+          --color-bg-elevated: #e2e8f0;
+          --color-text: #0f172a;
+          --color-text-secondary: #334155;
+          --color-text-muted: #64748b;
+          --color-border: #e2e8f0;
+          --color-border-light: #cbd5e1;
+
+          --color-accent: #0891b2;
+          --color-accent-light: #06b6d4;
+          --color-accent-dark: #0e7490;
+          --color-accent-subtle: #cffafe;
+
+          --color-secondary: #7c3aed;
+          --color-secondary-light: #8b5cf6;
+
+          --color-code-bg: #f1f5f9;
+          --color-code-border: #cbd5e1;
+
+          --color-link: #0891b2;
+          --color-link-hover: #0e7490;
+
+          --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.08);
+          --shadow-md: 0 4px 16px -2px rgb(0 0 0 / 0.12);
+          --shadow-lg: 0 20px 40px -8px rgb(0 0 0 / 0.16);
+          --shadow-glow: 0 0 20px -5px rgb(8 145 178 / 0.2);
+          --shadow-glow-purple: 0 0 20px -5px rgb(124 58 237 / 0.2);
+
+          --gradient-hero: linear-gradient(135deg, #0891b2 0%, #7c3aed 100%);
+          --gradient-card: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+          --gradient-border: linear-gradient(135deg, #0891b2 0%, #7c3aed 100%);
+        }
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        background: var(--color-bg);
+        color: var(--color-text);
+        line-height: 1.75;
+        font-size: 17px;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        font-feature-settings: 'kern' 1, 'liga' 1, 'calt' 1;
+        position: relative;
+      }
+
+      /* Animated background gradient for tech vibe */
+      body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background:
+          radial-gradient(circle at 20% 20%, rgba(6, 182, 212, 0.08) 0%, transparent 50%),
+          radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.08) 0%, transparent 50%);
+        pointer-events: none;
+        z-index: -1;
+      }
+
+      .container {
+        max-width: 980px;
+        margin: 0 auto;
+        padding: 0 2.5rem;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      header {
+        padding: 4rem 0 3rem;
+        margin-bottom: 1rem;
+      }
+
+      nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .main-header {
+        padding: 2.5rem 0 2rem;
+        margin-bottom: 2rem;
+        border-bottom: 1px solid var(--color-border);
+        position: relative;
+      }
+
+      .main-header::after {
+        content: '';
+        position: absolute;
+        bottom: -1px;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background: var(--gradient-border);
+        opacity: 0.5;
+      }
+
+      .enhanced-header {
+        background: none;
+        border-radius: 0;
+        box-shadow: none;
+        position: relative;
+        overflow: visible;
+        margin-bottom: 1.5rem;
+        padding: 0;
+        transition: none;
+      }
+      .main-header > * {
+        position: relative;
+        z-index: 1;
+      }
+      .header-tagline {
+        margin-top: 0.5rem;
+        font-size: 1.08rem;
+        color: #6d28d9;
+        font-weight: 500;
+        letter-spacing: 0.01em;
+        text-align: left;
+        padding-left: 0.2rem;
+        padding-bottom: 0.5rem;
+        opacity: 0.85;
+      }
+      .main-nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: var(--color-text);
+        text-decoration: none;
+        letter-spacing: -0.04em;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+      }
+      .logo-icon {
+        font-size: 1.75rem;
+        vertical-align: middle;
+        filter: drop-shadow(0 0 8px var(--color-accent));
+        animation: pulse 3s ease-in-out infinite;
+      }
+
+      @keyframes pulse {
+        0%, 100% {
+          filter: drop-shadow(0 0 8px var(--color-accent));
+        }
+        50% {
+          filter: drop-shadow(0 0 16px var(--color-accent-light));
+        }
+      }
+
+      .logo-text {
+        background: var(--gradient-hero);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-weight: 900;
+      }
+      .logo:hover .logo-text {
+        opacity: 0.8;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 2rem;
+        align-items: center;
+      }
+
+      .nav-links a {
+        color: var(--color-text-secondary);
+        text-decoration: none;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        font-size: 1rem;
+        font-weight: 600;
+        position: relative;
+        padding: 0.5rem 0;
+      }
+
+      .nav-links a::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: var(--gradient-hero);
+        transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .nav-links a:hover {
+        color: var(--color-accent-light);
+      }
+
+      .nav-links a:hover::after {
+        width: 100%;
+      }
+
+      main {
+        flex: 1;
+        padding: 2rem 0 5rem;
+      }
+
+      footer {
+        padding: 4rem 0;
+        margin-top: 5rem;
+        border-top: 1px solid var(--color-border);
+        text-align: center;
+        color: var(--color-text-muted);
+        font-size: 0.875rem;
+        position: relative;
+      }
+
+      footer::before {
+        content: '';
+        position: absolute;
+        top: -1px;
+        left: 0;
+        width: 100%;
+        height: 1px;
+        background: var(--gradient-border);
+        opacity: 0.3;
+      }
+
+      h1, h2, h3, h4, h5, h6 {
+        line-height: 1.25;
+        margin-bottom: 1.25rem;
+        font-weight: 700;
+        letter-spacing: -0.03em;
+        color: var(--color-text);
+      }
+
+      h1 {
+        font-size: 3rem;
+        font-weight: 900;
+        letter-spacing: -0.05em;
+        background: var(--gradient-hero);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        line-height: 1.1;
+      }
+
+      h2 {
+        font-size: 2rem;
+        font-weight: 700;
+      }
+
+      h3 {
+        font-size: 1.5rem;
+        font-weight: 600;
+      }
+
+      a {
+        color: var(--color-link);
+        text-decoration: none;
+        position: relative;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      a:hover {
+        color: var(--color-link-hover);
+      }
+
+      /* Code blocks and inline code */
+      code {
+        font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', Monaco, 'Cascadia Code', monospace;
+        font-size: 0.875em;
+        font-variant-ligatures: common-ligatures;
+      }
+
+      :not(pre) > code {
+        background: var(--color-code-bg);
+        color: var(--color-accent-light);
+        padding: 0.25em 0.5em;
+        border-radius: 6px;
+        font-size: 0.875em;
+        font-weight: 600;
+        border: 1px solid var(--color-code-border);
+        box-shadow: var(--shadow-sm);
+      }
+
+      pre {
+        background: var(--color-code-bg);
+        padding: 1.5rem;
+        border-radius: 12px;
+        overflow-x: auto;
+        border: 1px solid var(--color-border);
+        box-shadow: var(--shadow-md);
+        position: relative;
+      }
+
+      pre::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: var(--gradient-border);
+        opacity: 0.3;
+      }
+
+      pre code {
+        background: none;
+        padding: 0;
+        border: none;
+        font-size: 0.875rem;
+        line-height: 1.8;
+      }
+
+      /* Selection */
+      ::selection {
+        background: var(--color-accent-subtle);
+        color: var(--color-text);
+      }
+
+      @media (max-width: 640px) {
+        .nav-links {
+          gap: 1.5rem;
+        }
+
+        .nav-links a {
+          font-size: 0.875rem;
+        }
+
+        h1 {
+          font-size: 1.875rem;
+        }
+
+        h2 {
+          font-size: 1.5rem;
+        }
+
+        header {
+          padding: 2rem 0 1.5rem;
+        }
+      }
+    </style>
+  </body>
+</html>

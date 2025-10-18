@@ -1,0 +1,73 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="About - My Blog">
+  <article class="prose">
+    <h1>About Me</h1>
+
+    <p>
+      Hi! I'm a frontend engineer passionate about building beautiful,
+      performant web experiences. This blog is where I share my learnings,
+      experiments, and thoughts about web development.
+    </p>
+
+    <h2>What I Write About</h2>
+
+    <ul>
+      <li>Web development and frontend engineering</li>
+      <li>JavaScript, TypeScript, and modern frameworks</li>
+      <li>Performance optimization and best practices</li>
+      <li>UI/UX design principles</li>
+      <li>Personal projects and experiments</li>
+    </ul>
+
+    <h2>Get in Touch</h2>
+
+    <p>
+      Feel free to reach out if you'd like to connect or discuss anything
+      related to web development!
+    </p>
+  </article>
+</Layout>
+
+<style>
+  .prose {
+    max-width: 680px;
+  }
+
+  .prose h1 {
+    margin-bottom: 2.5rem;
+  }
+
+  .prose h2 {
+    margin-top: 3rem;
+    margin-bottom: 1.25rem;
+    font-size: 1.75rem;
+    color: var(--color-text);
+  }
+
+  .prose p {
+    margin-bottom: 1.75rem;
+    color: var(--color-text-secondary);
+    line-height: 1.8;
+    font-size: 1.0625rem;
+  }
+
+  .prose ul {
+    margin: 2rem 0;
+    padding-left: 1.75rem;
+  }
+
+  .prose li {
+    margin-bottom: 0.875rem;
+    color: var(--color-text-secondary);
+    padding-left: 0.5rem;
+    line-height: 1.7;
+  }
+
+  .prose li::marker {
+    color: var(--color-accent);
+    font-weight: 700;
+  }
+</style>

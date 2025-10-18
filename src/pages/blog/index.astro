@@ -1,0 +1,293 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+
+const allPosts = await getCollection('blog');
+const sortedPosts = allPosts.sort((a: CollectionEntry<'blog'>, b: CollectionEntry<'blog'>) =>
+  b.data.pubDate.getTime() - a.data.pubDate.getTime()
+);
+
+// Get all unique tags
+const allTags = [...new Set(allPosts.flatMap(post => post.data.tags || []))].sort();
+---
+
+<Layout title="Blog - My Blog">
+  <div class="blog-header">
+    <h1>Blog</h1>
+    <p>Thoughts on web development, frontend engineering, and life.</p>
+  </div>
+
+  {allTags.length > 0 && (
+    <div class="tags-filter">
+      <div class="tags-label">Filter by tag:</div>
+      <div class="tags-list">
+        <button class="tag-filter active" data-tag="">All</button>
+        {allTags.map((tag: string) => (
+          <button class="tag-filter" data-tag={tag}>
+            {tag}
+          </button>
+        ))}
+      </div>
+    </div>
+  )}
+
+  <div class="posts-list">
+    {sortedPosts.map((post: CollectionEntry<'blog'>) => (
+      <article class="post-item" data-tags={JSON.stringify(post.data.tags || [])}>
+        <a href={`/blog/${post.slug}`}>
+          <h2>{post.data.title}</h2>
+          <div class="post-meta">
+            <p class="post-date">
+              {post.data.pubDate.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+              })}
+            </p>
+            {post.data.tags && post.data.tags.length > 0 && (
+              <div class="post-tags">
+                {post.data.tags.map((tag: string) => (
+                  <span class="tag">{tag}</span>
+                ))}
+              </div>
+            )}
+          </div>
+          <p class="post-description">{post.data.description}</p>
+        </a>
+      </article>
+    ))}
+  </div>
+</Layout>
+
+<script>
+  // Client-side tag filtering
+  function initTagFilter() {
+    const tagButtons = document.querySelectorAll('.tag-filter');
+    const posts = document.querySelectorAll('.post-item');
+
+    // Get selected tag from URL on page load
+    const urlParams = new URLSearchParams(window.location.search);
+    const selectedTag = urlParams.get('tag');
+
+    // Set initial active state based on URL
+    if (selectedTag) {
+      tagButtons.forEach(btn => {
+        const btnTag = btn.getAttribute('data-tag');
+        if (btnTag === selectedTag) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+      filterPosts(selectedTag);
+    }
+
+    tagButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const selectedTag = button.getAttribute('data-tag');
+
+        // Update active state
+        tagButtons.forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
+
+        // Update URL
+        if (selectedTag) {
+          window.history.pushState({}, '', `/blog?tag=${encodeURIComponent(selectedTag)}`);
+        } else {
+          window.history.pushState({}, '', '/blog');
+        }
+
+        // Filter posts
+        filterPosts(selectedTag);
+      });
+    });
+
+    function filterPosts(tag: string | null) {
+      posts.forEach(post => {
+        const postElement = post as HTMLElement;
+        const postTags = JSON.parse(postElement.getAttribute('data-tags') || '[]');
+
+        if (!tag || postTags.includes(tag)) {
+          postElement.style.display = '';
+        } else {
+          postElement.style.display = 'none';
+        }
+      });
+    }
+  }
+
+  // Initialize on page load
+  initTagFilter();
+</script>
+
+<style>
+  .blog-header {
+    margin-bottom: 4rem;
+    padding: 2rem 0;
+  }
+
+  .blog-header h1 {
+    margin-bottom: 1rem;
+  }
+
+  .blog-header p {
+    color: var(--color-text-secondary);
+    font-size: 1.25rem;
+    line-height: 1.7;
+  }
+
+  .tags-filter {
+    margin-bottom: 3rem;
+    padding: 1.5rem;
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+  }
+
+  .tags-label {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--color-text-secondary);
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .tags-list {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .tag-filter {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background: transparent;
+    color: var(--color-text-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    font-family: inherit;
+  }
+
+  .tag-filter:hover {
+    background: var(--color-accent-subtle);
+    color: var(--color-accent-light);
+    border-color: var(--color-accent);
+    transform: translateY(-2px);
+  }
+
+  .tag-filter.active {
+    background: var(--color-accent-subtle);
+    color: var(--color-accent-light);
+    border-color: var(--color-accent);
+    box-shadow: var(--shadow-glow);
+  }
+
+  .posts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+  }
+
+  .post-item {
+    padding: 2.5rem;
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: 16px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .post-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--gradient-border);
+    opacity: 0;
+    transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .post-item:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-glow);
+    border-color: var(--color-accent);
+  }
+
+  .post-item:hover::before {
+    opacity: 1;
+  }
+
+  .post-item a {
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+
+  .post-item h2 {
+    color: var(--color-text);
+    margin-bottom: 0.75rem;
+    font-size: 1.75rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+  }
+
+  .post-date {
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+    font-variant-numeric: tabular-nums;
+    font-weight: 500;
+  }
+
+  .post-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .post-tags {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background: var(--color-accent-subtle);
+    color: var(--color-accent-light);
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.025em;
+    border: 1px solid var(--color-accent);
+  }
+
+  .post-description {
+    color: var(--color-text-secondary);
+    line-height: 1.7;
+    font-size: 1.0625rem;
+  }
+
+  @media (max-width: 640px) {
+    .post-item {
+      padding: 1.75rem;
+    }
+
+    .post-item h2 {
+      font-size: 1.5rem;
+    }
+  }
+</style>

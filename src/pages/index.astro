@@ -1,0 +1,248 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+
+const allPosts = await getCollection('blog');
+const sortedPosts = allPosts.sort((a: CollectionEntry<'blog'>, b: CollectionEntry<'blog'>) =>
+  b.data.pubDate.getTime() - a.data.pubDate.getTime()
+);
+---
+
+<Layout title="Home - My Blog">
+  <div class="hero">
+    <div class="hero-badge">Personal Blog</div>
+    <h1>Code. Learn. Share.</h1>
+    <p class="subtitle">
+      Chia sẻ về lập trình web, frontend development, và những suy nghĩ về cuộc sống hàng ngày.
+    </p>
+  </div>
+
+  <section class="recent-posts">
+    <div class="section-header">
+      <h2>Recent Posts</h2>
+      <a href="/blog" class="view-all">View all →</a>
+    </div>
+    <div class="posts-grid">
+      {sortedPosts.slice(0, 6).map((post: CollectionEntry<'blog'>) => (
+        <article class="post-card">
+          <a href={`/blog/${post.slug}`}>
+            <h3>{post.data.title}</h3>
+            <div class="post-meta">
+              <p class="post-date">
+                {post.data.pubDate.toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })}
+              </p>
+              {post.data.tags && post.data.tags.length > 0 && (
+                <div class="post-tags">
+                  {post.data.tags.slice(0, 3).map((tag: string) => (
+                    <span class="tag">{tag}</span>
+                  ))}
+                </div>
+              )}
+            </div>
+            <p class="post-description">{post.data.description}</p>
+          </a>
+        </article>
+      ))}
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .hero {
+    margin-bottom: 5rem;
+    padding: 3rem 0;
+  }
+
+  .hero-badge {
+    display: inline-block;
+    padding: 0.5rem 1.25rem;
+    background: var(--color-accent-subtle);
+    color: var(--color-accent-light);
+    border-radius: 24px;
+    font-size: 0.875rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    animation: fadeInUp 0.6s ease-out;
+    border: 1px solid var(--color-accent);
+    box-shadow: var(--shadow-glow);
+  }
+
+  .hero h1 {
+    margin-bottom: 1.5rem;
+    font-size: 4rem;
+    line-height: 1.05;
+    animation: fadeInUp 0.6s ease-out 0.1s both;
+    font-weight: 900;
+    letter-spacing: -0.05em;
+  }
+
+  .subtitle {
+    font-size: 1.25rem;
+    color: var(--color-text-secondary);
+    line-height: 1.7;
+    max-width: 560px;
+    animation: fadeInUp 0.6s ease-out 0.2s both;
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .recent-posts {
+    animation: fadeInUp 0.6s ease-out 0.3s both;
+  }
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2.5rem;
+  }
+
+  .section-header h2 {
+    margin: 0;
+    font-size: 1.75rem;
+  }
+
+  .view-all {
+    color: var(--color-accent-light);
+    font-size: 1rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .view-all:hover {
+    transform: translateX(4px);
+    color: var(--color-accent);
+  }
+
+  .posts-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .post-card {
+    padding: 2rem;
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: 16px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .post-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--gradient-border);
+    opacity: 0;
+    transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .post-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-glow);
+    border-color: var(--color-accent);
+  }
+
+  .post-card:hover::before {
+    opacity: 1;
+  }
+
+  .post-card a {
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+
+  .post-card h3 {
+    color: var(--color-text);
+    margin-bottom: 0.75rem;
+    font-size: 1.375rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  .post-date {
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+    font-variant-numeric: tabular-nums;
+    font-weight: 500;
+  }
+
+  .post-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .post-tags {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background: var(--color-accent-subtle);
+    color: var(--color-accent-light);
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.025em;
+    border: 1px solid var(--color-accent);
+  }
+
+  .post-description {
+    color: var(--color-text-secondary);
+    line-height: 1.7;
+    font-size: 1rem;
+  }
+
+  @media (max-width: 640px) {
+    .hero h1 {
+      font-size: 2.5rem;
+    }
+
+    .subtitle {
+      font-size: 1.125rem;
+    }
+
+    .section-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+
+    .post-card {
+      padding: 1.5rem;
+    }
+  }
+</style>
