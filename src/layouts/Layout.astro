@@ -9,14 +9,21 @@ interface Props {
 
 const {
   title,
-  description = "Personal blog sharing thoughts on web development, frontend engineering, and life",
-  image = "/og-image.png",
+  description = "SanPhan's blog sharing thoughts on web development, frontend and life",
+  image,
   article = false,
   publishedTime
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
-const socialImage = new URL(image, Astro.site);
+
+// Always generate dynamic OG image URL
+const socialImage = image && image.startsWith('http')
+  ? image
+  : new URL(
+      `/og-image.png?title=${encodeURIComponent(title)}&description=${encodeURIComponent(description)}`,
+      Astro.site
+    ).toString();
 ---
 
 <!DOCTYPE html>
@@ -61,7 +68,7 @@ const socialImage = new URL(image, Astro.site);
         <nav class="main-nav">
           <a href="/" class="logo">
             <span class="logo-icon" aria-hidden="true">✨</span>
-            <span class="logo-text">Sanphan's Blog</span>
+            <span class="logo-text">SanPhan's Blog</span>
           </a>
           <div class="nav-links">
             <a href="/">Home</a>
@@ -77,7 +84,7 @@ const socialImage = new URL(image, Astro.site);
       </main>
 
       <footer>
-        <p>&copy; {new Date().getFullYear()} My Blog. Built with Astro.</p>
+        <p>&copy; {new Date().getFullYear()} SanPhan'Blog. Built with Astro + Github Copilot</p>
       </footer>
     </div>
 

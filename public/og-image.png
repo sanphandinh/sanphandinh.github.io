@@ -1,5 +1,0 @@
-<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
-  <rect width="1200" height="630" fill="#0a0a0a"/>
-  <text x="100" y="315" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="72" font-weight="700" fill="#fafafa">My Blog</text>
-  <text x="100" y="390" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="36" fill="#a3a3a3">Frontend Engineer</text>
-</svg>
