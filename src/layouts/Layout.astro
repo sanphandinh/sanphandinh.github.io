@@ -7,6 +7,7 @@ interface Props {
   image?: string;
   article?: boolean;
   publishedTime?: string;
+  ogImage?: string; // Custom OG image slug
 }
 
 const {
@@ -14,18 +15,18 @@ const {
   description = "SanPhan's blog sharing thoughts on web development, frontend and life",
   image,
   article = false,
-  publishedTime
+  publishedTime,
+  ogImage
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
-// Always generate dynamic OG image URL
+// Generate static OG image URL
 const socialImage = image && image.startsWith('http')
   ? image
-  : new URL(
-      `/og-image.png?title=${encodeURIComponent(title)}&description=${encodeURIComponent(description)}`,
-      Astro.site
-    ).toString();
+  : ogImage
+  ? new URL(`/og/${ogImage}.png`, Astro.site).toString()
+  : new URL('/og/home.png', Astro.site).toString();
 ---
 
 <!DOCTYPE html>

@@ -37,7 +37,7 @@ export const getStaticPaths = (async () => {
     },
     // Individual blog posts
     ...blogPosts.map((post) => ({
-      params: { image: `blog-${post.id}` },
+      params: { image: post.id },
       props: {
         title: post.data.title,
         description: post.data.description,
@@ -49,7 +49,9 @@ export const getStaticPaths = (async () => {
 }) satisfies GetStaticPaths;
 
 export const GET: APIRoute = async ({ props }) => {
-  const { title, description } = props;  // Create the HTML template for the OG image - Satori compatible
+  const { title, description } = props;
+
+  // Create the HTML template for the OG image - Satori compatible
   const template = html`
     <div style="display: flex; flex-direction: column; width: 100%; height: 100%; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding: 60px;">
 

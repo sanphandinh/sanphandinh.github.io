@@ -12,7 +12,7 @@ const sortedPosts = allPosts.sort((a: CollectionEntry<'blog'>, b: CollectionEntr
 const allTags = [...new Set(allPosts.flatMap(post => post.data.tags || []))].sort();
 ---
 
-<Layout title="Blog - My Blog">
+<Layout title="Blog - My Blog" ogImage="blog">
   <div class="blog-header">
     <h1>Blog</h1>
     <p>Thoughts on web development, frontend engineering, and life.</p>
