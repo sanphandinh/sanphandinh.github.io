@@ -26,7 +26,7 @@ const sortedPosts = allPosts.sort((a: CollectionEntry<'blog'>, b: CollectionEntr
     <div class="posts-grid">
       {sortedPosts.slice(0, 6).map((post: CollectionEntry<'blog'>) => (
         <article class="post-card">
-          <a href={`/blog/${post.slug}`}>
+          <a href={`/blog/${post.id}`}>
             <h3>{post.data.title}</h3>
             <div class="post-meta">
               <p class="post-date">

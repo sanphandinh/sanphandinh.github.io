@@ -35,7 +35,7 @@ const allTags = [...new Set(allPosts.flatMap(post => post.data.tags || []))].sor
   <div class="posts-list">
     {sortedPosts.map((post: CollectionEntry<'blog'>) => (
       <article class="post-item" data-tags={JSON.stringify(post.data.tags || [])}>
-        <a href={`/blog/${post.slug}`}>
+        <a href={`/blog/${post.id}`}>
           <h2>{post.data.title}</h2>
           <div class="post-meta">
             <p class="post-date">
