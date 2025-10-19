@@ -1,0 +1,128 @@
+---
+import { getActiveSocialLinks } from '../config/site';
+
+interface Props {
+  variant?: 'default' | 'footer' | 'cards';
+}
+
+const { variant = 'default' } = Astro.props;
+const socialLinks = getActiveSocialLinks();
+---
+
+{socialLinks.length > 0 && (
+  <div class={`social-links social-links--${variant}`}>
+    {socialLinks.map((link) => (
+      <a
+        href={link.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="social-link"
+        aria-label={`Visit my ${link.label} profile`}
+        title={link.label}
+      >
+        <span class="social-icon" aria-hidden="true">{link.icon}</span>
+        <span class="social-label">{link.label}</span>
+      </a>
+    ))}
+  </div>
+)}
+
+<style>
+  /* Default variant - horizontal row */
+  .social-links {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .social-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    text-decoration: none;
+    color: var(--color-text-secondary);
+    font-weight: 600;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-size: 0.9375rem;
+  }
+
+  .social-link:hover {
+    background: var(--color-bg-elevated);
+    border-color: var(--color-accent);
+    color: var(--color-text);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+
+  .social-icon {
+    font-size: 1.25rem;
+    line-height: 1;
+  }
+
+  /* Footer variant - compact icons only */
+  .social-links--footer {
+    justify-content: center;
+    gap: 0.75rem;
+  }
+
+  .social-links--footer .social-link {
+    padding: 0.625rem;
+    border-radius: 50%;
+    width: 2.5rem;
+    height: 2.5rem;
+    justify-content: center;
+  }
+
+  .social-links--footer .social-label {
+    display: none;
+  }
+
+  .social-links--footer .social-icon {
+    font-size: 1.125rem;
+  }
+
+  /* Cards variant - larger cards for About page */
+  .social-links--cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+
+  .social-links--cards .social-link {
+    padding: 1.5rem;
+    flex-direction: column;
+    text-align: center;
+    gap: 0.75rem;
+  }
+
+  .social-links--cards .social-icon {
+    font-size: 2.5rem;
+  }
+
+  .social-links--cards .social-label {
+    font-size: 1.125rem;
+  }
+
+  .social-links--cards .social-link:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg), var(--shadow-glow);
+  }
+
+  @media (max-width: 640px) {
+    .social-links--cards {
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+
+    .social-links--cards .social-link {
+      padding: 1.25rem;
+    }
+
+    .social-links--cards .social-icon {
+      font-size: 2rem;
+    }
+  }
+</style>

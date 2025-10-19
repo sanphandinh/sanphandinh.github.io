@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import SocialLinks from '../components/SocialLinks.astro';
 ---
 
 <Layout title="About - SanPhan's Blog" description="Learn more about San, a frontend engineer passionate about web development and building beautiful user experiences.">
@@ -49,11 +50,14 @@ import Layout from '../layouts/Layout.astro';
     </div>
 
     <div class="content-section">
-      <h2>Get in Touch</h2>
+      <h2>Let's Connect</h2>
       <p class="contact-text">
         Feel free to reach out if you'd like to connect or discuss anything
         related to web development!
       </p>
+      <div class="social-section">
+        <SocialLinks variant="cards" />
+      </div>
     </div>
   </article>
 </Layout>
@@ -176,7 +180,11 @@ import Layout from '../layouts/Layout.astro';
     background: var(--color-bg-secondary);
     border-left: 4px solid var(--color-accent);
     border-radius: 8px;
-    margin: 0;
+    margin: 0 0 2rem 0;
+  }
+
+  .social-section {
+    margin-top: 1.5rem;
   }
 
   @media (max-width: 768px) {
