@@ -1,8 +1,8 @@
 ---
 title: "Welcome to My Blog"
 description: "First post introducing my personal blog built with Astro."
-pubDate: 2024-01-15
-author: "Your Name"
+pubDate: 2025-10-19
+author: "San Phan"
 tags: ["Personal", "Web Development", "Astro"]
 ---
 
