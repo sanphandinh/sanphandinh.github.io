@@ -12,282 +12,375 @@ const sortedPosts = allPosts.sort((a: CollectionEntry<'blog'>, b: CollectionEntr
 const allTags = [...new Set(allPosts.flatMap(post => post.data.tags || []))].sort();
 ---
 
-<Layout title="Blog - My Blog" ogImage="blog">
+<Layout title="Blog - SanPhan's Blog" ogImage="blog">
   <div class="blog-header">
-    <h1>Blog</h1>
-    <p>Thoughts on web development, frontend engineering, and life.</p>
+    <h1 class="page-title">Writing</h1>
+    <p class="page-description">Thoughts, tutorials, and insights on frontend development.</p>
   </div>
 
-  {allTags.length > 0 && (
-    <div class="tags-filter">
-      <div class="tags-label">Filter by tag:</div>
+  <div class="filter-bar">
+    <div class="search-container">
+      <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      <input type="text" id="search-input" placeholder="Search articles..." class="search-input" />
+    </div>
+
+    <div class="tags-scroll-container">
       <div class="tags-list">
-        <button class="tag-filter active" data-tag="">All</button>
+        <button class="tag-pill active" data-tag="">All</button>
         {allTags.map((tag: string) => (
-          <button class="tag-filter" data-tag={tag}>
+          <button class="tag-pill" data-tag={tag}>
             {tag}
           </button>
         ))}
       </div>
     </div>
-  )}
+  </div>
 
-  <div class="posts-list">
+  <div class="posts-grid" id="posts-grid">
     {sortedPosts.map((post: CollectionEntry<'blog'>) => (
-      <article class="post-item" data-tags={JSON.stringify(post.data.tags || [])}>
-        <a href={`/blog/${post.id}`}>
-          <h2>{post.data.title}</h2>
-          <div class="post-meta">
-            <p class="post-date">
-              {post.data.pubDate.toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-              })}
-            </p>
-            {post.data.tags && post.data.tags.length > 0 && (
-              <div class="post-tags">
-                {post.data.tags.map((tag: string) => (
-                  <span class="tag">{tag}</span>
-                ))}
-              </div>
-            )}
+      <article class="post-card" data-tags={JSON.stringify(post.data.tags || [])} data-title={post.data.title.toLowerCase()}>
+        <a href={`/blog/${post.id}`} class="card-link">
+          <div class="card-content">
+            <div class="card-meta">
+              <time datetime={post.data.pubDate.toISOString()}>
+                {post.data.pubDate.toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'short',
+                  day: 'numeric'
+                })}
+              </time>
+              {post.data.tags && post.data.tags[0] && (
+                <span class="card-tag">#{post.data.tags[0]}</span>
+              )}
+            </div>
+            <h2 class="card-title">{post.data.title}</h2>
+            <p class="card-description">{post.data.description}</p>
+            <div class="card-footer">
+              <span class="read-more">Read Article</span>
+            </div>
           </div>
-          <p class="post-description">{post.data.description}</p>
         </a>
       </article>
     ))}
   </div>
+
+  <div id="no-results" class="no-results" style="display: none;">
+    <p>No articles found matching your criteria.</p>
+    <button id="clear-filters" class="btn-text">Clear filters</button>
+  </div>
 </Layout>
 
 <script>
-  // Client-side tag filtering
-  function initTagFilter() {
-    const tagButtons = document.querySelectorAll('.tag-filter');
-    const posts = document.querySelectorAll('.post-item');
+  function initFilter() {
+    const searchInput = document.getElementById('search-input') as HTMLInputElement;
+    const tagButtons = document.querySelectorAll('.tag-pill');
+    const posts = document.querySelectorAll('.post-card');
+    const noResults = document.getElementById('no-results');
+    const clearFiltersBtn = document.getElementById('clear-filters');
 
-    // Get selected tag from URL on page load
+    let currentTag = '';
+    let currentSearch = '';
+
+    // Initialize from URL
     const urlParams = new URLSearchParams(window.location.search);
-    const selectedTag = urlParams.get('tag');
+    const tagParam = urlParams.get('tag');
+    if (tagParam) {
+      currentTag = tagParam;
+      updateActiveTag(currentTag);
+    }
 
-    // Set initial active state based on URL
-    if (selectedTag) {
+    function updateActiveTag(tag: string) {
       tagButtons.forEach(btn => {
-        const btnTag = btn.getAttribute('data-tag');
-        if (btnTag === selectedTag) {
+        if (btn.getAttribute('data-tag') === tag) {
           btn.classList.add('active');
         } else {
           btn.classList.remove('active');
         }
       });
-      filterPosts(selectedTag);
     }
 
-    tagButtons.forEach(button => {
-      button.addEventListener('click', () => {
-        const selectedTag = button.getAttribute('data-tag');
+    function filterPosts() {
+      let visibleCount = 0;
 
-        // Update active state
-        tagButtons.forEach(btn => btn.classList.remove('active'));
-        button.classList.add('active');
-
-        // Update URL
-        if (selectedTag) {
-          window.history.pushState({}, '', `/blog?tag=${encodeURIComponent(selectedTag)}`);
-        } else {
-          window.history.pushState({}, '', '/blog');
-        }
-
-        // Filter posts
-        filterPosts(selectedTag);
-      });
-    });
-
-    function filterPosts(tag: string | null) {
       posts.forEach(post => {
         const postElement = post as HTMLElement;
         const postTags = JSON.parse(postElement.getAttribute('data-tags') || '[]');
+        const postTitle = postElement.getAttribute('data-title') || '';
 
-        if (!tag || postTags.includes(tag)) {
+        const matchesTag = !currentTag || postTags.includes(currentTag);
+        const matchesSearch = !currentSearch || postTitle.includes(currentSearch);
+
+        if (matchesTag && matchesSearch) {
           postElement.style.display = '';
+          visibleCount++;
         } else {
           postElement.style.display = 'none';
         }
       });
+
+      if (noResults) {
+        noResults.style.display = visibleCount === 0 ? 'block' : 'none';
+      }
     }
+
+    // Event Listeners
+    searchInput?.addEventListener('input', (e) => {
+      currentSearch = (e.target as HTMLInputElement).value.toLowerCase();
+      filterPosts();
+    });
+
+    tagButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tag = btn.getAttribute('data-tag') || '';
+
+        if (currentTag === tag && tag !== '') {
+            // Toggle off if clicking same tag
+            currentTag = '';
+            updateActiveTag('');
+            window.history.pushState({}, '', '/blog');
+        } else {
+            currentTag = tag;
+            updateActiveTag(tag);
+            if (tag) {
+                window.history.pushState({}, '', `/blog?tag=${encodeURIComponent(tag)}`);
+            } else {
+                window.history.pushState({}, '', '/blog');
+            }
+        }
+        filterPosts();
+      });
+    });
+
+    clearFiltersBtn?.addEventListener('click', () => {
+      currentTag = '';
+      currentSearch = '';
+      if (searchInput) searchInput.value = '';
+      updateActiveTag('');
+      window.history.pushState({}, '', '/blog');
+      filterPosts();
+    });
+
+    // Initial filter
+    filterPosts();
   }
 
-  // Initialize on page load
-  initTagFilter();
+  // Run on load
+  initFilter();
+
+  // Run on view transitions if enabled
+  document.addEventListener('astro:page-load', initFilter);
 </script>
 
 <style>
   .blog-header {
-    margin-bottom: 4rem;
-    padding: 2rem 0;
+    padding: 4rem 0 3rem;
+    text-align: center;
   }
 
-  .blog-header h1 {
+  .page-title {
+    font-size: 3.5rem;
+    font-weight: 900;
     margin-bottom: 1rem;
+    letter-spacing: -0.03em;
   }
 
-  .blog-header p {
-    color: var(--color-text-secondary);
+  .page-description {
     font-size: 1.25rem;
-    line-height: 1.7;
+    color: var(--color-text-secondary);
+    max-width: 600px;
+    margin: 0 auto;
   }
 
-  .tags-filter {
-    margin-bottom: 3rem;
-    padding: 1.5rem;
+  /* Filter Bar */
+  .filter-bar {
+    margin-bottom: 4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .search-container {
+    position: relative;
+    max-width: 500px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .search-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-text-muted);
+    pointer-events: none;
+  }
+
+  .search-input {
+    width: 100%;
+    padding: 0.875rem 1rem 0.875rem 3rem;
     background: var(--color-bg-secondary);
     border: 1px solid var(--color-border);
     border-radius: 12px;
+    color: var(--color-text);
+    font-size: 1rem;
+    transition: all 0.2s;
   }
 
-  .tags-label {
-    font-size: 0.875rem;
-    font-weight: 700;
-    color: var(--color-text-secondary);
-    margin-bottom: 1rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+  .search-input:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.1);
+  }
+
+  .tags-scroll-container {
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+
+  .tags-scroll-container::-webkit-scrollbar {
+    display: none;
   }
 
   .tags-list {
     display: flex;
     gap: 0.75rem;
-    flex-wrap: wrap;
+    justify-content: center;
+    min-width: min-content;
+    padding: 0 1rem;
   }
 
-  .tag-filter {
-    display: inline-block;
-    padding: 0.5rem 1rem;
+  .tag-pill {
+    white-space: nowrap;
+    padding: 0.5rem 1.25rem;
     background: transparent;
-    color: var(--color-text-secondary);
     border: 1px solid var(--color-border);
-    border-radius: 20px;
+    border-radius: 100px;
+    color: var(--color-text-secondary);
     font-size: 0.875rem;
-    font-weight: 600;
-    text-decoration: none;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-weight: 500;
     cursor: pointer;
-    font-family: inherit;
+    transition: all 0.2s;
   }
 
-  .tag-filter:hover {
-    background: var(--color-accent-subtle);
-    color: var(--color-accent-light);
+  .tag-pill:hover {
     border-color: var(--color-accent);
-    transform: translateY(-2px);
+    color: var(--color-accent);
   }
 
-  .tag-filter.active {
-    background: var(--color-accent-subtle);
-    color: var(--color-accent-light);
+  .tag-pill.active {
+    background: var(--color-accent);
+    color: var(--color-bg);
     border-color: var(--color-accent);
-    box-shadow: var(--shadow-glow);
   }
 
-  .posts-list {
-    display: flex;
-    flex-direction: column;
-    gap: 2.5rem;
+  /* Grid (Shared with Home) */
+  .posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 2rem;
   }
 
-  .post-item {
-    padding: 2.5rem;
+  .post-card {
     background: var(--color-bg-secondary);
     border: 1px solid var(--color-border);
     border-radius: 16px;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: var(--shadow-sm);
-    position: relative;
     overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    height: 100%;
   }
 
-  .post-item::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: var(--gradient-border);
-    opacity: 0;
-    transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .post-item:hover {
-    transform: translateY(-6px);
-    box-shadow: var(--shadow-glow);
+  .post-card:hover {
+    transform: translateY(-8px);
     border-color: var(--color-accent);
+    box-shadow: var(--shadow-glow);
   }
 
-  .post-item:hover::before {
-    opacity: 1;
-  }
-
-  .post-item a {
+  .card-link {
     text-decoration: none;
-    display: block;
     color: inherit;
+    display: block;
+    height: 100%;
   }
 
-  .post-item h2 {
-    color: var(--color-text);
-    margin-bottom: 0.75rem;
-    font-size: 1.75rem;
-    font-weight: 700;
-    letter-spacing: -0.03em;
-  }
-
-  .post-date {
-    font-size: 0.875rem;
-    color: var(--color-text-muted);
-    font-variant-numeric: tabular-nums;
-    font-weight: 500;
-  }
-
-  .post-meta {
+  .card-content {
+    padding: 2rem;
     display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .card-meta {
+    display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: 1rem;
     margin-bottom: 1rem;
-    flex-wrap: wrap;
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
   }
 
-  .post-tags {
-    display: flex;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-  }
-
-  .tag {
-    display: inline-block;
-    padding: 0.25rem 0.75rem;
-    background: var(--color-accent-subtle);
-    color: var(--color-accent-light);
-    border-radius: 12px;
-    font-size: 0.75rem;
+  .card-tag {
+    color: var(--color-accent);
     font-weight: 600;
-    letter-spacing: 0.025em;
-    border: 1px solid var(--color-accent);
   }
 
-  .post-description {
+  .card-title {
+    font-size: 1.5rem;
+    line-height: 1.3;
+    margin-bottom: 1rem;
+    color: var(--color-text);
+    font-weight: 700;
+  }
+
+  .card-description {
     color: var(--color-text-secondary);
-    line-height: 1.7;
-    font-size: 1.0625rem;
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+    flex-grow: 1;
   }
 
-  @media (max-width: 640px) {
-    .post-item {
-      padding: 1.75rem;
+  .card-footer {
+    margin-top: auto;
+  }
+
+  .read-more {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-accent);
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .no-results {
+    text-align: center;
+    padding: 4rem 0;
+    color: var(--color-text-secondary);
+  }
+
+  .btn-text {
+    background: none;
+    border: none;
+    color: var(--color-accent);
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 1rem;
+    text-decoration: underline;
+  }
+
+  @media (max-width: 768px) {
+    .page-title {
+      font-size: 2.5rem;
     }
 
-    .post-item h2 {
-      font-size: 1.5rem;
+    .tags-list {
+      justify-content: flex-start;
+    }
+
+    .posts-grid {
+      grid-template-columns: 1fr;
     }
   }
 </style>

@@ -8,14 +8,14 @@
     "preview": "astro preview"
   },
   "dependencies": {
-    "@astrojs/rss": "^4.0.12",
-    "astro": "^5.14.6",
+    "@astrojs/rss": "^4.0.13",
+    "astro": "^5.15.9",
     "satori": "^0.18.3",
     "satori-html": "^0.3.2",
     "sharp": "^0.34.4"
   },
   "devDependencies": {
-    "@astrojs/mdx": "^4.3.7",
+    "@astrojs/mdx": "^4.3.11",
     "typescript": "^5.5.0"
   }
 }

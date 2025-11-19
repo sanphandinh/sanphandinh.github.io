@@ -1,5 +1,6 @@
 ---
 import SocialLinks from '../components/SocialLinks.astro';
+import { ViewTransitions } from 'astro:transitions';
 
 interface Props {
   title: string;
@@ -8,6 +9,7 @@ interface Props {
   article?: boolean;
   publishedTime?: string;
   ogImage?: string; // Custom OG image slug
+  wide?: boolean; // New prop for wider layout
 }
 
 const {
@@ -16,7 +18,8 @@ const {
   image,
   article = false,
   publishedTime,
-  ogImage
+  ogImage,
+  wide = false
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
@@ -62,10 +65,11 @@ const socialImage = image && image.startsWith('http')
     <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="/rss.xml" />
 
     <title>{title}</title>
+    <ViewTransitions />
   </head>
   <body>
 
-    <div class="container">
+    <div class:list={["container", { wide }]}>
 
       <header class="main-header enhanced-header">
         <nav class="main-nav">
@@ -79,7 +83,6 @@ const socialImage = image && image.startsWith('http')
             <a href="/about">About</a>
           </div>
         </nav>
-  <!-- Tagline removed for minimal header -->
       </header>
 
       <main>
@@ -211,6 +214,10 @@ const socialImage = image && image.startsWith('http')
         min-height: 100vh;
         display: flex;
         flex-direction: column;
+      }
+
+      .container.wide {
+        max-width: 1440px;
       }
 
       header {
