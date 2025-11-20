@@ -115,7 +115,7 @@ const jsonLd = {
         <!-- Post Navigation -->
         <nav class="post-nav">
           {prevPost ? (
-            <a href={`/blog/${prevPost.id}`} class="nav-card prev">
+            <a href={`/blog/${prevPost.id}`} class="nav-card prev" aria-label={`Previous post: ${prevPost.data.title}`}>
               <span class="nav-label">Previous</span>
               <span class="nav-title">{prevPost.data.title}</span>
             </a>
@@ -124,7 +124,7 @@ const jsonLd = {
           )}
 
           {nextPost ? (
-            <a href={`/blog/${nextPost.id}`} class="nav-card next">
+            <a href={`/blog/${nextPost.id}`} class="nav-card next" aria-label={`Next post: ${nextPost.data.title}`}>
               <span class="nav-label">Next</span>
               <span class="nav-title">{nextPost.data.title}</span>
             </a>

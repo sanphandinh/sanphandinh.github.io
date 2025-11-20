@@ -41,7 +41,7 @@ const sortedPosts = allPosts.sort((a: CollectionEntry<'blog'>, b: CollectionEntr
     <div class="posts-grid">
       {sortedPosts.slice(0, 6).map((post: CollectionEntry<'blog'>) => (
         <article class="post-card">
-          <a href={`/blog/${post.id}`} class="card-link">
+          <a href={`/blog/${post.id}`} class="card-link" aria-label={`Read article: ${post.data.title}`}>
             <div class="card-content">
               <div class="card-meta">
                 <time datetime={post.data.pubDate.toISOString()}>

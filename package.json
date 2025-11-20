@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@astrojs/rss": "^4.0.13",
+    "@astrojs/sitemap": "^3.6.0",
     "astro": "^5.15.9",
     "satori": "^0.18.3",
     "satori-html": "^0.3.2",
